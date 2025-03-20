@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抽奖</title>
+</head>
+
+<body>
+    <h1>抽奖</h1>
+    <textarea id="items" rows="10" cols="30" placeholder="请输入抽奖项，每项用回车隔开"></textarea><br>
+    <button onclick="draw()">抽奖</button>
+    <p id="result"></p>
+
+    <script>
+        function draw() {
+            var items = document.getElementById("items").value;
+            fetch("/lottery", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: "items=" + encodeURIComponent(items)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result) {
+                        document.getElementById("result").innerText = "中奖项: " + data.result;
+                    } else {
+                        document.getElementById("result").innerText = "错误: " + data.error;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById("result").innerText = "请求失败: " + error;
+                });
+        }
+    </script>
+</body>
+
+</html>
